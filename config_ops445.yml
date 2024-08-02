@@ -1,0 +1,48 @@
+---
+- name: configure lab vm
+  hosts: vmlab
+  user: student
+  become: yes
+  vars:
+    apache_version: 2.9
+    motd_warning: "WARNING: used by ICT  faculty/students only. \n"
+    testserver: yes
+  tasks:
+    - name: update apache
+      action: yum name=httpd state=latest
+
+    - name: install extra packages repository for the EPEL
+      action: yum name=epel-release state=present
+
+    - name: remove 'tree' package
+      action: yum name=tree state=absent
+
+    - name: set hostname
+      hostname:
+        name: vdluu
+        
+    - name: create vdluu user
+      user:
+        name: vdluu
+        password: "{{ '123964215' | password_hash('sha512') }}"
+        state: present
+        shell: /bin/bash
+        groups: wheel
+      
+    - name: set up directories
+      file:
+        path: "/home/vdluu/ops445/lab{{ item }}"
+        state: directory
+        owner: vdluu
+        group: vdluu
+        mode: "0755"
+      loop:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
